@@ -2,6 +2,8 @@
 #define VISION_H
 
 #include "opencv2/opencv.hpp"
+#include "opencv2/objdetect.hpp"
+#include "opencv2/highgui.hpp"
 #include "utils.h"
 
 using namespace cv;
@@ -15,6 +17,7 @@ public:
     void convertImage(Mat target_frame);
     bool captureImage();
     void thresholding();
+    void faceDetect();
 
 private:
     Vision();
@@ -22,10 +25,11 @@ private:
 
     VideoCapture m_VideoCapture;
     cv::Mat m_RawFrame;
+    cv::Mat m_GrayFrame;
+    cv::Mat m_FacesFrame;
     cv::Mat m_HSVFrame;
     cv::Mat m_BinaryFrame;
     int m_IdCamera;
-
 };
 
 #endif // VISION_H

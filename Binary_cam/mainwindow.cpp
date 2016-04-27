@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_Vision = Vision::getInstance();
     m_Display1 = &m_Vision->m_RawFrame;
-    m_Display2 = &m_Vision->m_HSVFrame;
+    m_Display2 = &m_Vision->m_FacesFrame;
     //Vision::getInstance()->m_DisplaySize = cv::Size2i(ui->display1->width()-1,ui->display1->height()-1);
 
     m_DisplayTimer = new QTimer(this);
@@ -25,10 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::refreshDisplay()
 {
     m_Vision->captureImage();
-    ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(*m_Display1)));
+    ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display1->clone())));
 
-    m_Vision->thresholding();
-    ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(*m_Display2)));
+    m_Vision->faceDetect();
+    ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
 }
 
 MainWindow::~MainWindow()
