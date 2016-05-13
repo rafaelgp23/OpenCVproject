@@ -22,8 +22,11 @@ public:
 
 private slots:
         void refreshDisplay();
+        void on_pushButton_Exit_clicked();
 
 private:
+    //void mousePressEvent( QMouseEvent* ev);
+
     Ui::MainWindow *ui;    
     Vision *m_Vision;
     cv::Mat *m_Display1;

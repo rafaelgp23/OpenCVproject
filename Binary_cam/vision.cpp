@@ -4,7 +4,7 @@ Vision* Vision::m_Instance = new Vision();
 
 Vision::Vision()
 {
-     m_IdCamera = 0;
+    m_IdCamera = 0;
 }
 
 Vision* Vision::getInstance()
@@ -23,6 +23,10 @@ bool Vision::captureImage(){
     return true;
 }
 
+void Vision::recognizeShapes(){
+
+}
+
 void Vision::faceDetect(){
     m_RawFrame.copyTo(m_FacesFrame);
     Mat grayFrame;
@@ -30,17 +34,19 @@ void Vision::faceDetect(){
     cv::CascadeClassifier faceCascade("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
     cv::cvtColor(m_RawFrame, grayFrame, cv::COLOR_BGR2GRAY);
     cv::equalizeHist( grayFrame, grayFrame );
+    //m_GrayFrame = grayFrame;
 
     std::vector<Rect> faces;
 
-    faceCascade.detectMultiScale( grayFrame, faces, 1.3, 3, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30) );
+    faceCascade.detectMultiScale( grayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30) );
 
     for(int i=0;i<faces.size();++i){
-    cv::Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-    ellipse( m_FacesFrame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
-}
+        cv::Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+        ellipse( m_FacesFrame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+    }
 }
 
+//undone
 void Vision::thresholding()
 {
     //convert image color model from BRG to HSV

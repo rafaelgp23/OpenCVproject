@@ -18,6 +18,7 @@ public:
     bool captureImage();
     void thresholding();
     void faceDetect();
+    void recognizeShapes();
 
 private:
     Vision();
@@ -25,7 +26,7 @@ private:
 
     VideoCapture m_VideoCapture;
     cv::Mat m_RawFrame;
-    cv::Mat m_GrayFrame;
+    //cv::Mat m_GrayFrame;
     cv::Mat m_FacesFrame;
     cv::Mat m_HSVFrame;
     cv::Mat m_BinaryFrame;

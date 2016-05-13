@@ -29,9 +29,18 @@ void MainWindow::refreshDisplay()
 
     m_Vision->faceDetect();
     ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
+
+    //    namedWindow("gray",cv::WINDOW_AUTOSIZE);
+    //    cv::imshow("gray",m_Vision->m_GrayFrame);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_Exit_clicked()
+{
+    cv::destroyAllWindows();
+    qApp->quit();
 }

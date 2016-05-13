@@ -29,6 +29,51 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>199</y>
+       <width>161</width>
+       <height>261</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Exit">
+        <property name="text">
+         <string>Exit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
@@ -97,7 +142,11 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
-        <widget class="QWidget" name="page_3">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="page_faceDetect"/>
+        <widget class="QWidget" name="page_2">
          <widget class="QWidget" name="formLayoutWidget_2">
           <property name="geometry">
            <rect>
@@ -116,7 +165,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QSlider" name="horizontalSlider_7">
+            <widget class="QSlider" name="horizontalSlider_H1">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -153,7 +202,7 @@ QSlider::handle:horizontal {
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QSlider" name="horizontalSlider_8">
+            <widget class="QSlider" name="horizontalSlider_H2">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -190,7 +239,7 @@ QSlider::handle:horizontal {
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QSlider" name="horizontalSlider_9">
+            <widget class="QSlider" name="horizontalSlider_S1">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -227,7 +276,7 @@ QSlider::handle:horizontal {
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QSlider" name="horizontalSlider_10">
+            <widget class="QSlider" name="horizontalSlider_S2">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -261,7 +310,7 @@ QSlider::handle:horizontal {
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QSlider" name="horizontalSlider_11">
+            <widget class="QSlider" name="horizontalSlider_V1">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -295,7 +344,7 @@ QSlider::handle:horizontal {
             </widget>
            </item>
            <item row="5" column="1">
-            <widget class="QSlider" name="horizontalSlider_12">
+            <widget class="QSlider" name="horizontalSlider_V2">
              <property name="styleSheet">
               <string notr="true">QSlider::groove:horizontal {
     border: 1px solid black;
@@ -324,12 +373,11 @@ QSlider::handle:horizontal {
           </layout>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_4"/>
        </widget>
       </item>
      </layout>
     </widget>
-    <widget class="QLabel" name="label_13">
+    <widget class="QLabel" name="label_Page">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -344,13 +392,16 @@ QSlider::handle:horizontal {
       </font>
      </property>
      <property name="text">
-      <string>Calibrate</string>
+      <string>Face Detect</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
+   <zorder>horizontalLayoutWidget</zorder>
+   <zorder>frame_2</zorder>
+   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
