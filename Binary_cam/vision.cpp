@@ -18,9 +18,9 @@ bool Vision::captureImage(){
 
     m_VideoCapture >> m_RawFrame;
 
-    //resize image to the display size
-    //resize(m_RawFrame, m_RawFrame, m_DisplaySize);
     return true;
+    //resize image to the display size
+    //resize(m_RawFrame, m_RawFrame, m_DisplaySize);    
 }
 
 void Vision::recognizeShapes(){
@@ -40,6 +40,7 @@ void Vision::faceDetect(){
 
     faceCascade.detectMultiScale( grayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30) );
 
+    //move this part to mainwindow.cpp \/
     for(int i=0;i<faces.size();++i){
         cv::Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
         ellipse( m_FacesFrame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );

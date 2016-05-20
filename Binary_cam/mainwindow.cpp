@@ -11,17 +11,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->showMaximized();
     this->setWindowTitle("Computer Visual Project");
+    ui->stackedWidget->setCurrentIndex(0);
 
     m_Vision = Vision::getInstance();
     m_Display1 = &m_Vision->m_RawFrame;
     m_Display2 = &m_Vision->m_FacesFrame;
     //Vision::getInstance()->m_DisplaySize = cv::Size2i(ui->display1->width()-1,ui->display1->height()-1);
 
+    //this timer refreshes the display frames
     m_DisplayTimer = new QTimer(this);
     connect(m_DisplayTimer, SIGNAL(timeout()), this, SLOT(refreshDisplay()));
-    m_DisplayTimer->start(1);
+    m_DisplayTimer->start(1);//milisecond
 }
 
+//display the video using QLabel
 void MainWindow::refreshDisplay()
 {
     m_Vision->captureImage();
@@ -37,6 +40,8 @@ void MainWindow::refreshDisplay()
 MainWindow::~MainWindow()
 {
     delete ui;
+    cv::destroyAllWindows();
+    qApp->quit();
 }
 
 void MainWindow::on_pushButton_Exit_clicked()
