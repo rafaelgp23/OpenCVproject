@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QLabel>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
 #include "vision.h"

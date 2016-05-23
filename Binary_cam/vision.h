@@ -2,8 +2,6 @@
 #define VISION_H
 
 #include "opencv2/opencv.hpp"
-#include "opencv2/objdetect.hpp"
-#include "opencv2/highgui.hpp"
 #include "utils.h"
 
 using namespace cv;
@@ -24,7 +22,7 @@ private:
     Vision();
     static Vision *m_Instance;
 
-    VideoCapture m_VideoCapture;
+    cv::VideoCapture m_VideoCapture;
     cv::Mat m_RawFrame;
     //cv::Mat m_GrayFrame;
     cv::Mat m_FacesFrame;
