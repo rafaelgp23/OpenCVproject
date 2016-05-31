@@ -14,11 +14,17 @@ MainWindow::MainWindow(QWidget *parent) :
     m_Vision = Vision::getInstance();
     on_pushButton_Settings_clicked();
     setDisplayRatio();
+    setupCam();
 
     //setup DisplayRatio GroupBox
     connect(ui->radioButton_defaultRatio,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
     connect(ui->radioButton_16_9,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
     connect(ui->radioButton_4_3,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
+
+    //setup sliders
+    connect(ui->horizontalSlider_Bright,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
+    connect(ui->horizontalSlider_Contr,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
+    connect(ui->horizontalSlider_Satur,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
 
     m_Display1 = &m_Vision->m_RawFrame;
     m_Display2 = &m_Vision->m_FacesFrame;
@@ -59,6 +65,12 @@ void MainWindow::on_pushButton_Settings_clicked()
 {
     ui->label_CurrentPage->setText("Settings");
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::setupCam(){
+    m_Vision->m_VideoCapture.set(CV_CAP_PROP_BRIGHTNESS,float(ui->horizontalSlider_Bright->value())/100);
+    m_Vision->m_VideoCapture.set(CV_CAP_PROP_CONTRAST,float(ui->horizontalSlider_Contr->value())/100);
+    m_Vision->m_VideoCapture.set(CV_CAP_PROP_SATURATION,float(ui->horizontalSlider_Satur->value())/100);
 }
 
 void MainWindow::setDisplayRatio(){

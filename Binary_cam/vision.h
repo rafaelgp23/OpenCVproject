@@ -14,8 +14,11 @@ public:
     static Vision* getInstance();
     void convertImage(Mat target_frame);
     void captureImage();
-    void thresholding();
     void faceDetect();
+
+    //temporary atribute
+    int counter = 0;
+    int ang = 0;
 
 private:
     Vision();

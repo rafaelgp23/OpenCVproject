@@ -21,11 +21,11 @@ public:
 
 private slots:
         void refreshDisplay();
-        void on_pushButton_Exit_clicked();
-
-        void on_pushButton_Settings_clicked();
-
         void setDisplayRatio();
+        void setupCam();
+
+        void on_pushButton_Exit_clicked();
+        void on_pushButton_Settings_clicked();        
 
 private:
     //void mousePressEvent( QMouseEvent* ev);
