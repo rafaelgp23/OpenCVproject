@@ -11,12 +11,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->showMaximized();
     this->setWindowTitle("Computer Visual Project");
-    ui->stackedWidget->setCurrentIndex(0);
-
     m_Vision = Vision::getInstance();
+    on_pushButton_Settings_clicked();
+    setDisplayRatio();
+
+    //setup DisplayRatio GroupBox
+    connect(ui->radioButton_defaultRatio,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
+    connect(ui->radioButton_16_9,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
+    connect(ui->radioButton_4_3,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
+
     m_Display1 = &m_Vision->m_RawFrame;
     m_Display2 = &m_Vision->m_FacesFrame;
-    //Vision::getInstance()->m_DisplaySize = cv::Size2i(ui->display1->width()-1,ui->display1->height()-1);
 
     //this timer refreshes the display frames
     m_DisplayTimer = new QTimer(this);
@@ -48,4 +53,34 @@ void MainWindow::on_pushButton_Exit_clicked()
 {
     cv::destroyAllWindows();
     qApp->quit();
+}
+
+void MainWindow::on_pushButton_Settings_clicked()
+{
+    ui->label_CurrentPage->setText("Settings");
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::setDisplayRatio(){
+
+    int width = ui->display1->width()-1, height = ui->display1->height()-1;
+    int w, h;
+
+    if(ui->radioButton_defaultRatio->isChecked()){
+        w = m_Vision->m_VideoCapture.get(CV_CAP_PROP_FRAME_WIDTH);
+        h = m_Vision->m_VideoCapture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    }
+    else if(ui->radioButton_16_9->isChecked()){
+        w = 16;
+        h = 9;
+    }
+    else if(ui->radioButton_4_3->isChecked()){
+        w = 4;
+        h = 3;
+    }
+
+    if(float(width)/w<float(height)/h)
+        m_Vision->m_DisplaySize = cv::Size2i(width,width*h/w);
+    else
+        m_Vision->m_DisplaySize = cv::Size2i(height*w/h,height);
 }

@@ -12,19 +12,17 @@ Vision* Vision::getInstance()
     return m_Instance;
 }
 
-bool Vision::captureImage(){
+void Vision::captureImage(){
     while (!m_VideoCapture.isOpened())
         m_VideoCapture.open(m_IdCamera);
 
     m_VideoCapture >> m_RawFrame;
 
-    return true;
+    //    Mat r = cv::getRotationMatrix2D(cv::Point2f(m_RawFrame.cols/2,m_RawFrame.rows/2), 10, 1.0);
+    //    warpAffine(m_RawFrame, m_RawFrame, r, Size2i(1280,720));
+
     //resize image to the display size
-    //resize(m_RawFrame, m_RawFrame, m_DisplaySize);    
-}
-
-void Vision::recognizeShapes(){
-
+    resize(m_RawFrame, m_RawFrame, m_DisplaySize);
 }
 
 void Vision::faceDetect(){
@@ -38,7 +36,7 @@ void Vision::faceDetect(){
 
     std::vector<Rect> faces;
 
-    faceCascade.detectMultiScale( grayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30) );
+    faceCascade.detectMultiScale( grayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(50, 50) );
 
     //move this part to mainwindow.cpp \/
     for(int i=0;i<faces.size();++i){

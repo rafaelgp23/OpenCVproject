@@ -14,74 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>201</width>
-      <height>491</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QWidget" name="verticalLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>19</x>
-       <y>199</y>
-       <width>161</width>
-       <height>261</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_Exit">
-        <property name="text">
-         <string>Exit</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>10</x>
       <y>10</y>
-      <width>1141</width>
-      <height>491</height>
+      <width>1341</width>
+      <height>431</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -119,9 +58,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>510</y>
-      <width>1351</width>
-      <height>231</height>
+      <y>450</y>
+      <width>1341</width>
+      <height>291</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -133,25 +72,81 @@
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>260</x>
        <y>0</y>
-       <width>1141</width>
-       <height>231</height>
+       <width>1081</width>
+       <height>281</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
-        <widget class="QWidget" name="page_faceDetect"/>
+        <widget class="QWidget" name="page_Settings">
+         <widget class="QGroupBox" name="groupBox_displayRatio">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>191</width>
+            <height>131</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Display Ratio:</string>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>19</y>
+             <width>171</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="radioButton_4_3">
+              <property name="text">
+               <string>4:3</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="radioButton_16_9">
+              <property name="text">
+               <string>16:9</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="radioButton_defaultRatio">
+              <property name="text">
+               <string>default</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </widget>
         <widget class="QWidget" name="page_1">
          <widget class="QWidget" name="formLayoutWidget_2">
           <property name="geometry">
            <rect>
-            <x>520</x>
-            <y>10</y>
+            <x>250</x>
+            <y>20</y>
             <width>351</width>
             <height>206</height>
            </rect>
@@ -377,31 +372,83 @@ QSlider::handle:horizontal {
       </item>
      </layout>
     </widget>
-    <widget class="QLabel" name="label_Page">
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>10</y>
+       <width>181</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Settings">
+        <property name="text">
+         <string>Settings</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Exit">
+        <property name="text">
+         <string>Exit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_CurrentPage">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>60</y>
-       <width>191</width>
+       <y>190</y>
+       <width>241</width>
        <height>81</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>Arial</family>
+       <pointsize>18</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
       </font>
      </property>
      <property name="text">
-      <string>Face Detect</string>
+      <string>label_CurrentPage</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
-   <zorder>horizontalLayoutWidget</zorder>
-   <zorder>frame_2</zorder>
-   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

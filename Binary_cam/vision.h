@@ -13,18 +13,17 @@ class Vision
 public:
     static Vision* getInstance();
     void convertImage(Mat target_frame);
-    bool captureImage();
+    void captureImage();
     void thresholding();
     void faceDetect();
-    void recognizeShapes();
 
 private:
     Vision();
     static Vision *m_Instance;
 
+    cv::Size2i m_DisplaySize;
     cv::VideoCapture m_VideoCapture;
     cv::Mat m_RawFrame;
-    //cv::Mat m_GrayFrame;
     cv::Mat m_FacesFrame;
     cv::Mat m_HSVFrame;
     cv::Mat m_BinaryFrame;

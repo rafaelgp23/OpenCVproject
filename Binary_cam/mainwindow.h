@@ -23,6 +23,10 @@ private slots:
         void refreshDisplay();
         void on_pushButton_Exit_clicked();
 
+        void on_pushButton_Settings_clicked();
+
+        void setDisplayRatio();
+
 private:
     //void mousePressEvent( QMouseEvent* ev);
 
@@ -32,6 +36,7 @@ private:
     cv::Mat *m_Display2;
     QTimer* m_DisplayTimer;
 
+    void setVideoRatio(int width, int height);
 };
 
 #endif // MAINWINDOW_H
