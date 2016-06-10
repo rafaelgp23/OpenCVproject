@@ -23,8 +23,11 @@ private:
 
     cv::CascadeClassifier m_EyeCascade;
     cv::CascadeClassifier m_FacesCascade;
+
     std::vector<Rect> m_Eyes;
     std::vector<Rect> m_Faces;
+    double m_Angle;
+    int m_SteadyControl;
 
     cv::Size2i m_DisplaySize;
     cv::VideoCapture m_VideoCapture;

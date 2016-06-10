@@ -10,6 +10,8 @@ Vision::Vision()
     m_EyeCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_eye.xml");
     m_FacesCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
     m_IdCamera = 0;
+    m_Angle = 0;
+    m_SteadyControl = -1;
 }
 
 Vision* Vision::getInstance()
@@ -56,16 +58,23 @@ void Vision::faceDetect(){
 
     //detect faces
 
-    m_FacesCascade.detectMultiScale( m_GrayFrame, m_Faces, 1.1, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
+    //ignores false detection and, in this case, keeps the value of angle
+    if(!m_Eyes.empty()){
+        double newAng = atan((double)(m_Eyes[0].y - m_Eyes[1].y) / (double)(m_Eyes[0].x - m_Eyes[1].x));
+        if(m_SteadyControl<0 || abs(newAng*180/M_PI-m_Angle*180/M_PI)<30){
+            m_Angle = newAng;
+            m_SteadyControl = 1;
+        }
+        else
+            m_SteadyControl--;
+    }
+    std::cout<<"m_Angle: "<<(int)(m_Angle*180/M_PI)<<std::endl;
+
+    m_FacesCascade.detectMultiScale( m_GrayFrame, m_Faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
 
     for(int i=0;i<m_Faces.size();++i){
-        rectangle(m_FacesFrame, m_Faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
-    //    cv::Point center( m_Faces[i].x + m_Faces[i].width*0.5, m_Faces[i].y + m_Faces[i].height*0.5 );
-      //  ellipse( m_FacesFrame, center, Size( m_Faces[i].width*0.5, m_Faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 4, 8, 0 );
+        cv::rectangle(m_FacesFrame, m_Faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
     }
-
-
-
 
     //int ang = 0;
     //    if(m_Faces/2 > 0) // two eyes at least
@@ -73,23 +82,23 @@ void Vision::faceDetect(){
     //        ang = atan( (leftEye.y - rightEye.y) / (leftEye.x - rightEye/x) );
     //    }
 
-    // int bound_w = int((m_GrayFrame.size().height * fabs(sin(M_PI/4))) + (m_GrayFrame.size().width * fabs(cos(M_PI/4))));
-    // int bound_h = int((m_GrayFrame.size().height * fabs(cos(M_PI/4))) + (m_GrayFrame.size().width * fabs(sin(M_PI/4))));
+    int bound_w = int((m_GrayFrame.size().height * fabs(sin(m_Angle))) + (m_GrayFrame.size().width * fabs(cos(m_Angle))));
+    int bound_h = int((m_GrayFrame.size().height * fabs(cos(m_Angle))) + (m_GrayFrame.size().width * fabs(sin(m_Angle))));
 
-    //    rotate = cv::getRotationMatrix2D(cv::Point2f(m_GrayFrame.cols/2,m_GrayFrame.rows/2), ang-90, 1.0);
-    //    rotate.at<double>(0,2) += bound_w / 2 - m_GrayFrame.cols/2;
-    //    rotate.at<double>(1,2) += bound_h / 2 - m_GrayFrame.rows/2;
+    cv::Mat rotate = cv::getRotationMatrix2D(cv::Point2f(m_GrayFrame.cols/2,m_GrayFrame.rows/2), m_Angle*180/M_PI, 1.0);
+    rotate.at<double>(0,2) += bound_w / 2 - m_GrayFrame.cols/2;
+    rotate.at<double>(1,2) += bound_h / 2 - m_GrayFrame.rows/2;
 
-    //    warpAffine(m_GrayFrame, m_GrayFrame, rotate, Size2i(bound_w, bound_h));
+    warpAffine(m_GrayFrame, m_GrayFrame, rotate, Size2i(bound_w, bound_h));
 
     //cv::CascadeClassifier faceCascade("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
 
     //std::cout<<bound_h<<" "<<bound_w<<std::endl;
 
-    //    imshow("rotated",m_GrayFrame);
-    //    char k = cv::waitKey(1);
-    //    if(k == 27) //esc
-    //        exit(EXIT_SUCCESS);
+    imshow("rotated",m_GrayFrame);
+    char k = cv::waitKey(1);
+    if(k == 27) //esc
+        exit(EXIT_SUCCESS);
 }
 
 void Vision::combineEyes(){
