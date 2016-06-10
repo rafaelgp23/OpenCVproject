@@ -41,10 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::refreshDisplay()
 {
     m_Vision->captureImage();
-    ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display1->clone())));
+  //  ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display1->clone())));
 
     m_Vision->faceDetect();
-    ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
+  //  ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
 
     //    namedWindow("gray",cv::WINDOW_AUTOSIZE);
     //    cv::imshow("gray",m_Vision->m_GrayFrame);
