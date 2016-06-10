@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QKeyEvent>
 #include <opencv2/opencv.hpp>
 #include "vision.h"
 #include "utils.h"
@@ -29,6 +30,8 @@ private slots:
 
 private:
     //void mousePressEvent( QMouseEvent* ev);
+    void keyPressEvent(QKeyEvent * ev);
+
 
     Ui::MainWindow *ui;    
     Vision *m_Vision;

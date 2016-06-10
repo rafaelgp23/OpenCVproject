@@ -15,18 +15,21 @@ public:
     void convertImage(Mat target_frame);
     void captureImage();
     void faceDetect();
-
-    //temporary atribute
-    int counter = 0;
-    int ang = 0;
+    void combineEyes();
 
 private:
     Vision();
     static Vision *m_Instance;
 
+    cv::CascadeClassifier m_EyeCascade;
+    cv::CascadeClassifier m_FacesCascade;
+    std::vector<Rect> m_Eyes;
+    std::vector<Rect> m_Faces;
+
     cv::Size2i m_DisplaySize;
     cv::VideoCapture m_VideoCapture;
     cv::Mat m_RawFrame;
+    cv::Mat m_GrayFrame;
     cv::Mat m_FacesFrame;
     cv::Mat m_HSVFrame;
     cv::Mat m_BinaryFrame;
