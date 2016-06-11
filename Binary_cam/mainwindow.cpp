@@ -41,10 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::refreshDisplay()
 {
     m_Vision->captureImage();
-  //  ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display1->clone())));
+    ui->display1->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display1->clone())));
 
     m_Vision->faceDetect();
-  //  ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
+    drawFace();
+    ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
 
     //    namedWindow("gray",cv::WINDOW_AUTOSIZE);
     //    cv::imshow("gray",m_Vision->m_GrayFrame);
@@ -61,24 +62,27 @@ void MainWindow::keyPressEvent(QKeyEvent *ev){
     }
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-    cv::destroyAllWindows();
-    qApp->quit();
-}
+void MainWindow::drawFace(){
+    //draw eyes
+    if(ui->checkBox_drawEyes->isChecked())
+        for(int i=0;i<m_Vision->m_Eyes.size();++i){
+            cv::Point eyeCenter( m_Vision->m_Eyes[i].x + m_Vision->m_Eyes[i].width*0.5, m_Vision->m_Eyes[i].y + m_Vision->m_Eyes[i].height*0.5 );
+            cv::ellipse( m_Vision->m_FacesFrame, eyeCenter, Size( m_Vision->m_Eyes[i].width*0.5, m_Vision->m_Eyes[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 4, 8, 0 );
+        }
 
-void MainWindow::on_pushButton_Exit_clicked()
-{
-    cv::destroyAllWindows();
-    qApp->quit();
-    exit(EXIT_SUCCESS);
-}
+    //draw eyes combined
+    if(ui->checkBox_drawEyesCombined->isChecked())
+        for(int i=0;i<m_Vision->m_Eyes.size();i+=2){
+            cv::Point leftEye( m_Vision->m_Eyes[i].x + m_Vision->m_Eyes[i].width*0.5, m_Vision->m_Eyes[i].y + m_Vision->m_Eyes[i].height*0.5 );
+            cv::Point rightEye( m_Vision->m_Eyes[i+1].x + m_Vision->m_Eyes[i+1].width*0.5, m_Vision->m_Eyes[i+1].y + m_Vision->m_Eyes[i+1].height*0.5 );
+            cv::line(m_Vision->m_FacesFrame,leftEye,rightEye, Scalar( 0, 0, 0 ),2);
+        }
 
-void MainWindow::on_pushButton_Settings_clicked()
-{
-    ui->label_CurrentPage->setText("Settings");
-    ui->stackedWidget->setCurrentIndex(0);
+    //draw faces
+    if(ui->checkBox_drawFaces->isChecked())
+        for(int i=0;i<m_Vision->m_Faces.size();++i)
+            for(int j=0;j<4;++j)
+                cv::line(m_Vision->m_FacesFrame,m_Vision->m_Faces[0].p[j],m_Vision->m_Faces[0].p[(j+1)%4], Scalar( 0, 255, 255 ),2);
 }
 
 void MainWindow::setupCam(){
@@ -109,4 +113,24 @@ void MainWindow::setDisplayRatio(){
         m_Vision->m_DisplaySize = cv::Size2i(width,width*h/w);
     else
         m_Vision->m_DisplaySize = cv::Size2i(height*w/h,height);
+}
+
+void MainWindow::on_pushButton_Settings_clicked()
+{
+    ui->label_CurrentPage->setText("Settings");
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_pushButton_Exit_clicked()
+{
+    cv::destroyAllWindows();
+    qApp->quit();
+    exit(EXIT_SUCCESS);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+    cv::destroyAllWindows();
+    qApp->quit();
 }

@@ -89,7 +89,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>20</y>
+            <y>10</y>
             <width>191</width>
             <height>131</height>
            </rect>
@@ -271,6 +271,61 @@ QSlider::handle:horizontal {
             </widget>
            </item>
           </layout>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_displayRatio_2">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>140</y>
+            <width>191</width>
+            <height>131</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Draw:</string>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>19</y>
+             <width>171</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="checkBox_drawFaces">
+              <property name="text">
+               <string>Faces</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="checkBox_drawEyes">
+              <property name="text">
+               <string>Eyes</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="checkBox_drawEyesCombined">
+              <property name="text">
+               <string>Eyes Combined</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="page_1"/>

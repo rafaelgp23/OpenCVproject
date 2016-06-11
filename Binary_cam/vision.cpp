@@ -36,51 +36,47 @@ void Vision::faceDetect(){
     m_RawFrame.copyTo(m_FacesFrame);
     m_Eyes.clear();
     m_Faces.clear();
+    std::vector<Rect> faces;
 
     cv::cvtColor(m_RawFrame, m_GrayFrame, cv::COLOR_BGR2GRAY);
     cv::equalizeHist( m_GrayFrame, m_GrayFrame );
 
-    //detect eyes
+    //Detect eyes
     m_EyeCascade.detectMultiScale( m_GrayFrame, m_Eyes, 1.1, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(25, 25));
 
-    for(int i=0;i<m_Eyes.size();++i){
-        cv::Point eyeCenter( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
-        cv::ellipse( m_FacesFrame, eyeCenter, Size( m_Eyes[i].width*0.5, m_Eyes[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 255 ), 4, 8, 0 );
-    }
+    //    //draw eyes
+    //    for(int i=0;i<m_Eyes.size();++i){
+    //        cv::Point eyeCenter( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
+    //        cv::ellipse( m_FacesFrame, eyeCenter, Size( m_Eyes[i].width*0.5, m_Eyes[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 4, 8, 0 );
+    //    }
 
     combineEyes();
 
-    for(int i=0;i<m_Eyes.size();i+=2){
-        cv::Point leftEye( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
-        cv::Point rightEye( m_Eyes[i+1].x + m_Eyes[i+1].width*0.5, m_Eyes[i+1].y + m_Eyes[i+1].height*0.5 );
-        cv::line(m_FacesFrame,leftEye,rightEye, Scalar( 0, 0, 255 ),2);
-    }
+    //    //draw eyes combined
+    //    for(int i=0;i<m_Eyes.size();i+=2){
+    //        cv::Point leftEye( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
+    //        cv::Point rightEye( m_Eyes[i+1].x + m_Eyes[i+1].width*0.5, m_Eyes[i+1].y + m_Eyes[i+1].height*0.5 );
+    //        cv::line(m_FacesFrame,leftEye,rightEye, Scalar( 0, 0, 0 ),2);
+    //    }
 
-    //detect faces
+    //Detect faces
 
     //ignores false detection and, in this case, keeps the value of angle
     if(!m_Eyes.empty()){
         double newAng = atan((double)(m_Eyes[0].y - m_Eyes[1].y) / (double)(m_Eyes[0].x - m_Eyes[1].x));
-        if(m_SteadyControl<0 || abs(newAng*180/M_PI-m_Angle*180/M_PI)<30){
+        if(m_SteadyControl<5 || abs(newAng*180/M_PI-m_Angle*180/M_PI)<30){
             m_Angle = newAng;
-            m_SteadyControl = 1;
+            m_SteadyControl = 7;
         }
         else
             m_SteadyControl--;
     }
-    std::cout<<"m_Angle: "<<(int)(m_Angle*180/M_PI)<<std::endl;
-
-    m_FacesCascade.detectMultiScale( m_GrayFrame, m_Faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
-
-    for(int i=0;i<m_Faces.size();++i){
-        cv::rectangle(m_FacesFrame, m_Faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
+    else {
+        m_SteadyControl--;
+        if(m_SteadyControl<0){
+            m_Angle = 0;
+        }
     }
-
-    //int ang = 0;
-    //    if(m_Faces/2 > 0) // two eyes at least
-    //    {
-    //        ang = atan( (leftEye.y - rightEye.y) / (leftEye.x - rightEye/x) );
-    //    }
 
     int bound_w = int((m_GrayFrame.size().height * fabs(sin(m_Angle))) + (m_GrayFrame.size().width * fabs(cos(m_Angle))));
     int bound_h = int((m_GrayFrame.size().height * fabs(cos(m_Angle))) + (m_GrayFrame.size().width * fabs(sin(m_Angle))));
@@ -91,14 +87,42 @@ void Vision::faceDetect(){
 
     warpAffine(m_GrayFrame, m_GrayFrame, rotate, Size2i(bound_w, bound_h));
 
-    //cv::CascadeClassifier faceCascade("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
+    m_FacesCascade.detectMultiScale( m_GrayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
 
-    //std::cout<<bound_h<<" "<<bound_w<<std::endl;
+    //    //draw faces (grayframe only)
+    //            for(int i=0;i<faces.size();++i){
+    //        cv::rectangle(m_GrayFrame, faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
+    //    }
 
-    imshow("rotated",m_GrayFrame);
-    char k = cv::waitKey(1);
-    if(k == 27) //esc
-        exit(EXIT_SUCCESS);
+    if(!faces.empty()){
+        trapezium trapez;
+        trapez.p[0] = cv::Point(faces[0].x,faces[0].y);
+        trapez.p[1] = cv::Point(faces[0].x+faces[0].width,faces[0].y);
+        trapez.p[2] = cv::Point(faces[0].x+faces[0].width,faces[0].y+faces[0].height);
+        trapez.p[3] = cv::Point(faces[0].x,faces[0].y+faces[0].height);
+
+        for(int i=0;i<4;++i){
+            double ang = atan2((double)(m_GrayFrame.rows/2 - trapez.p[i].y),(double)(trapez.p[i].x - m_GrayFrame.cols/2));
+            float dist = sqrt(pow(trapez.p[i].x-m_GrayFrame.cols/2,2)+pow(trapez.p[i].y-m_GrayFrame.rows/2,2));
+
+            trapez.p[i].x = m_FacesFrame.cols/2 + dist*cos(m_Angle-ang);
+            trapez.p[i].y = m_FacesFrame.rows/2 + dist*sin(m_Angle-ang);
+        }
+        m_Faces.push_back(trapez);
+
+        //        //draw faces
+        //        for(int i=0;i<4;++i)
+        //            cv::line(m_FacesFrame,m_Faces[0].p[i],m_Faces[0].p[(i+1)%4], Scalar( 0, 255, 255 ),2);
+    }
+
+    //    //test
+    //    cv::Point center(m_GrayFrame.cols/2,m_GrayFrame.rows/2);
+    //    cv::ellipse( m_GrayFrame, center, Size(20, 20), 0, 0, 360, Scalar( 255, 255, 255 ), 4, 8, 0 );
+
+    //    imshow("rotated",m_GrayFrame);
+    //    char k = cv::waitKey(1);
+    //    if(k == 27) //esc
+    //        exit(EXIT_SUCCESS);
 }
 
 void Vision::combineEyes(){

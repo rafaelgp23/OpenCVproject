@@ -25,7 +25,7 @@ private:
     cv::CascadeClassifier m_FacesCascade;
 
     std::vector<Rect> m_Eyes;
-    std::vector<Rect> m_Faces;
+    std::vector<trapezium> m_Faces;
     double m_Angle;
     int m_SteadyControl;
 

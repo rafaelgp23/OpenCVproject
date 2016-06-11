@@ -22,6 +22,7 @@ public:
 
 private slots:
         void refreshDisplay();
+        void drawFace();
         void setDisplayRatio();
         void setupCam();
 
