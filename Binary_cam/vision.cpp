@@ -95,20 +95,20 @@ void Vision::faceDetect(){
     //    }
 
     if(!faces.empty()){
-        trapezium trapez;
-        trapez.p[0] = cv::Point(faces[0].x,faces[0].y);
-        trapez.p[1] = cv::Point(faces[0].x+faces[0].width,faces[0].y);
-        trapez.p[2] = cv::Point(faces[0].x+faces[0].width,faces[0].y+faces[0].height);
-        trapez.p[3] = cv::Point(faces[0].x,faces[0].y+faces[0].height);
+        quadrangle quad;
+        quad.p[0] = cv::Point(faces[0].x,faces[0].y);
+        quad.p[1] = cv::Point(faces[0].x+faces[0].width,faces[0].y);
+        quad.p[2] = cv::Point(faces[0].x+faces[0].width,faces[0].y+faces[0].height);
+        quad.p[3] = cv::Point(faces[0].x,faces[0].y+faces[0].height);
 
         for(int i=0;i<4;++i){
-            double ang = atan2((double)(m_GrayFrame.rows/2 - trapez.p[i].y),(double)(trapez.p[i].x - m_GrayFrame.cols/2));
-            float dist = sqrt(pow(trapez.p[i].x-m_GrayFrame.cols/2,2)+pow(trapez.p[i].y-m_GrayFrame.rows/2,2));
+            double ang = atan2((double)(m_GrayFrame.rows/2 - quad.p[i].y),(double)(quad.p[i].x - m_GrayFrame.cols/2));
+            float dist = sqrt(pow(quad.p[i].x-m_GrayFrame.cols/2,2)+pow(quad.p[i].y-m_GrayFrame.rows/2,2));
 
-            trapez.p[i].x = m_FacesFrame.cols/2 + dist*cos(m_Angle-ang);
-            trapez.p[i].y = m_FacesFrame.rows/2 + dist*sin(m_Angle-ang);
+            quad.p[i].x = m_FacesFrame.cols/2 + dist*cos(m_Angle-ang);
+            quad.p[i].y = m_FacesFrame.rows/2 + dist*sin(m_Angle-ang);
         }
-        m_Faces.push_back(trapez);
+        m_Faces.push_back(quad);
 
         //        //draw faces
         //        for(int i=0;i<4;++i)

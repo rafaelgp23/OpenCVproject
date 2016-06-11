@@ -4,10 +4,10 @@
 #include "QImage"
 #include "opencv2/opencv.hpp"
 
-struct trapezium{
+struct quadrangle{
     cv::Point p[4];
 };
 
-QImage Mat2QImage(cv::Mat cvMat);
+QImage Mat2QImage(const cv::Mat &cvMat);
 
 #endif // UTILS_H

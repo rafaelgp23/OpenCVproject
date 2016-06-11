@@ -21,18 +21,19 @@ public:
     ~MainWindow();
 
 private slots:
-        void refreshDisplay();
-        void drawFace();
+        void refreshDisplay();        
         void setDisplayRatio();
         void setupCam();
 
         void on_pushButton_Exit_clicked();
-        void on_pushButton_Settings_clicked();        
+        void on_pushButton_Settings_clicked();
+        void on_pushButton_DevMode_clicked();
 
 private:
     //void mousePressEvent( QMouseEvent* ev);
     void keyPressEvent(QKeyEvent * ev);
-
+    void drawFace();
+    void log();
 
     Ui::MainWindow *ui;    
     Vision *m_Vision;

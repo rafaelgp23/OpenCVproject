@@ -45,10 +45,10 @@ void MainWindow::refreshDisplay()
 
     m_Vision->faceDetect();
     drawFace();
+    log();
     ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
 
-    //    namedWindow("gray",cv::WINDOW_AUTOSIZE);
-    //    cv::imshow("gray",m_Vision->m_GrayFrame);
+    // log();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev){
@@ -60,6 +60,16 @@ void MainWindow::keyPressEvent(QKeyEvent *ev){
         return;
         break;
     }
+}
+
+void MainWindow::log(){
+    //ui->textBrowser->moveCursor(QTextCursor::Start);
+    ui->textBrowser->clear();
+
+    ui->textBrowser->insertPlainText("Faces detected: " + QString::number(m_Vision->m_Faces.size()) + "\n");
+    ui->textBrowser->insertPlainText("Eyes detected: " + QString::number(m_Vision->m_Eyes.size()) + "\n");
+    ui->textBrowser->insertPlainText("Face angle: " + QString::number((int)(m_Vision->m_Angle*180/M_PI)) + " deg\n");
+
 }
 
 void MainWindow::drawFace(){
@@ -117,8 +127,14 @@ void MainWindow::setDisplayRatio(){
 
 void MainWindow::on_pushButton_Settings_clicked()
 {
-    ui->label_CurrentPage->setText("Settings");
     ui->stackedWidget->setCurrentIndex(0);
+    ui->label_CurrentPage->setText("Settings");
+}
+
+void MainWindow::on_pushButton_DevMode_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->label_CurrentPage->setText("Developer Mode");
 }
 
 void MainWindow::on_pushButton_Exit_clicked()
