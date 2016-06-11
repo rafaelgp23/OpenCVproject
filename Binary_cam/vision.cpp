@@ -10,7 +10,6 @@ Vision::Vision()
     m_EyeCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_eye.xml");
     m_FacesCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
     m_IdCamera = 0;
-    m_Angle = 0;
     m_SteadyControl = -1;
 }
 
@@ -61,68 +60,71 @@ void Vision::faceDetect(){
 
     //Detect faces
 
-    //ignores false detection and, in this case, keeps the value of angle
-    if(!m_Eyes.empty()){
-        double newAng = atan((double)(m_Eyes[0].y - m_Eyes[1].y) / (double)(m_Eyes[0].x - m_Eyes[1].x));
-        if(m_SteadyControl<5 || abs(newAng*180/M_PI-m_Angle*180/M_PI)<30){
-            m_Angle = newAng;
+    for(int i=m_Angles.size();i<m_Eyes.size()/2;++i)
+        m_Angles.push_back(0);
+
+    for(int i=0;i<m_Eyes.size();i+=2){
+        double newAng = atan((double)(m_Eyes[i].y - m_Eyes[i+1].y) / (double)(m_Eyes[i].x - m_Eyes[i+1].x));
+        if(m_SteadyControl<5 || abs(newAng*180/M_PI-m_Angles[i/2]*180/M_PI)<30){ //ignores false detection and, in this case, keeps the value of angle
+            m_Angles[i/2] = newAng;
             m_SteadyControl = 7;
         }
         else
             m_SteadyControl--;
-    }
-    else {
-        m_SteadyControl--;
+
         if(m_SteadyControl<0){
-            m_Angle = 0;
+            m_Angles.clear();
+            for(int i=m_Angles.size();i<m_Eyes.size()/2;++i)
+                m_Angles.push_back(0);
+        }
+
+        cv::Mat grayframe = m_GrayFrame.clone();
+
+        int bound_w = int((m_GrayFrame.size().height * fabs(sin(m_Angles[i/2]))) + (m_GrayFrame.size().width * fabs(cos(m_Angles[i/2]))));
+        int bound_h = int((m_GrayFrame.size().height * fabs(cos(m_Angles[i/2]))) + (m_GrayFrame.size().width * fabs(sin(m_Angles[i/2]))));
+
+        cv::Mat rotate = cv::getRotationMatrix2D(cv::Point2f(m_GrayFrame.cols/2,m_GrayFrame.rows/2), m_Angles[i/2]*180/M_PI, 1.0);
+        rotate.at<double>(0,2) += bound_w / 2 - m_GrayFrame.cols/2;
+        rotate.at<double>(1,2) += bound_h / 2 - m_GrayFrame.rows/2;
+
+        warpAffine(m_GrayFrame, grayframe, rotate, Size2i(bound_w, bound_h));
+
+        faces.clear();
+        m_FacesCascade.detectMultiScale( grayframe, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
+
+        //    //draw faces (grayframe only)
+        //            for(int i=0;i<faces.size();++i){
+        //        cv::rectangle(m_GrayFrame, faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
+        //    }
+
+        for(int j = 0;j<faces.size();++j){
+            quadrangle quad;
+            quad.p[0] = cv::Point(faces[j].x,faces[j].y);
+            quad.p[1] = cv::Point(faces[j].x+faces[j].width,faces[j].y);
+            quad.p[2] = cv::Point(faces[j].x+faces[j].width,faces[j].y+faces[j].height);
+            quad.p[3] = cv::Point(faces[j].x,faces[j].y+faces[j].height);
+
+            for(int k=0;k<4;++k){
+                double ang = atan2((double)(grayframe.rows/2 - quad.p[k].y),(double)(quad.p[k].x - grayframe.cols/2));
+                float dist = sqrt(pow(quad.p[k].x-grayframe.cols/2,2)+pow(quad.p[k].y-grayframe.rows/2,2));
+
+                quad.p[k].x = m_FacesFrame.cols/2 + dist*cos(m_Angles[i/2]-ang);
+                quad.p[k].y = m_FacesFrame.rows/2 + dist*sin(m_Angles[i/2]-ang);
+            }
+            cv::Point c1 = cv::Point((quad.p[0].x + quad.p[1].x + quad.p[2].x + quad.p[3].x)/4,(quad.p[0].y + quad.p[1].y + quad.p[2].y + quad.p[3].y)/4);
+            cv::Point c2;
+            bool flag = true;
+            for(int i=0;i<m_Faces.size();++i){
+                c2 = cv::Point((m_Faces[i].p[0].x + m_Faces[i].p[1].x + m_Faces[i].p[2].x + m_Faces[i].p[3].x)/4,(m_Faces[i].p[0].y + m_Faces[i].p[1].y + m_Faces[i].p[2].y + m_Faces[i].p[3].y)/4);
+                float dist = sqrt((c2.x-c1.x,2)+pow(c2.y-c1.y,2));
+                if(dist<10){
+                    m_Faces[i] = quad;
+                    return;
+                }
+            }
+            m_Faces.push_back(quad);
         }
     }
-
-    int bound_w = int((m_GrayFrame.size().height * fabs(sin(m_Angle))) + (m_GrayFrame.size().width * fabs(cos(m_Angle))));
-    int bound_h = int((m_GrayFrame.size().height * fabs(cos(m_Angle))) + (m_GrayFrame.size().width * fabs(sin(m_Angle))));
-
-    cv::Mat rotate = cv::getRotationMatrix2D(cv::Point2f(m_GrayFrame.cols/2,m_GrayFrame.rows/2), m_Angle*180/M_PI, 1.0);
-    rotate.at<double>(0,2) += bound_w / 2 - m_GrayFrame.cols/2;
-    rotate.at<double>(1,2) += bound_h / 2 - m_GrayFrame.rows/2;
-
-    warpAffine(m_GrayFrame, m_GrayFrame, rotate, Size2i(bound_w, bound_h));
-
-    m_FacesCascade.detectMultiScale( m_GrayFrame, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
-
-    //    //draw faces (grayframe only)
-    //            for(int i=0;i<faces.size();++i){
-    //        cv::rectangle(m_GrayFrame, faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
-    //    }
-
-    if(!faces.empty()){
-        quadrangle quad;
-        quad.p[0] = cv::Point(faces[0].x,faces[0].y);
-        quad.p[1] = cv::Point(faces[0].x+faces[0].width,faces[0].y);
-        quad.p[2] = cv::Point(faces[0].x+faces[0].width,faces[0].y+faces[0].height);
-        quad.p[3] = cv::Point(faces[0].x,faces[0].y+faces[0].height);
-
-        for(int i=0;i<4;++i){
-            double ang = atan2((double)(m_GrayFrame.rows/2 - quad.p[i].y),(double)(quad.p[i].x - m_GrayFrame.cols/2));
-            float dist = sqrt(pow(quad.p[i].x-m_GrayFrame.cols/2,2)+pow(quad.p[i].y-m_GrayFrame.rows/2,2));
-
-            quad.p[i].x = m_FacesFrame.cols/2 + dist*cos(m_Angle-ang);
-            quad.p[i].y = m_FacesFrame.rows/2 + dist*sin(m_Angle-ang);
-        }
-        m_Faces.push_back(quad);
-
-        //        //draw faces
-        //        for(int i=0;i<4;++i)
-        //            cv::line(m_FacesFrame,m_Faces[0].p[i],m_Faces[0].p[(i+1)%4], Scalar( 0, 255, 255 ),2);
-    }
-
-    //    //test
-    //    cv::Point center(m_GrayFrame.cols/2,m_GrayFrame.rows/2);
-    //    cv::ellipse( m_GrayFrame, center, Size(20, 20), 0, 0, 360, Scalar( 255, 255, 255 ), 4, 8, 0 );
-
-    //    imshow("rotated",m_GrayFrame);
-    //    char k = cv::waitKey(1);
-    //    if(k == 27) //esc
-    //        exit(EXIT_SUCCESS);
 }
 
 void Vision::combineEyes(){

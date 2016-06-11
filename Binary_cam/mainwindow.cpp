@@ -68,7 +68,8 @@ void MainWindow::log(){
 
     ui->textBrowser->insertPlainText("Faces detected: " + QString::number(m_Vision->m_Faces.size()) + "\n");
     ui->textBrowser->insertPlainText("Eyes detected: " + QString::number(m_Vision->m_Eyes.size()) + "\n");
-    ui->textBrowser->insertPlainText("Face angle: " + QString::number((int)(m_Vision->m_Angle*180/M_PI)) + " deg\n");
+    for(int i=0;i<m_Vision->m_Eyes.size()/2;++i)
+        ui->textBrowser->insertPlainText("Face angle n" + QString::number(i+1) + ": " + QString::number((int)(m_Vision->m_Angles[i]*180/M_PI)) + " deg\n");
 
 }
 
@@ -92,7 +93,7 @@ void MainWindow::drawFace(){
     if(ui->checkBox_drawFaces->isChecked())
         for(int i=0;i<m_Vision->m_Faces.size();++i)
             for(int j=0;j<4;++j)
-                cv::line(m_Vision->m_FacesFrame,m_Vision->m_Faces[0].p[j],m_Vision->m_Faces[0].p[(j+1)%4], Scalar( 0, 255, 255 ),2);
+                cv::line(m_Vision->m_FacesFrame,m_Vision->m_Faces[i].p[j],m_Vision->m_Faces[i].p[(j+1)%4], Scalar( 0, 255, 255 ),2);
 }
 
 void MainWindow::setupCam(){

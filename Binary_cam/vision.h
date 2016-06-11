@@ -26,7 +26,7 @@ private:
 
     std::vector<Rect> m_Eyes;
     std::vector<quadrangle> m_Faces;
-    double m_Angle;
+    std::vector<double> m_Angles;
     int m_SteadyControl;
 
     cv::Size2i m_DisplaySize;
