@@ -31,6 +31,7 @@ private:
 
     cv::Size2i m_DisplaySize;
     cv::VideoCapture m_VideoCapture;
+    float m_CameraDefaultSettings[3];
     cv::Mat m_RawFrame;
     cv::Mat m_GrayFrame;
     cv::Mat m_FacesFrame;

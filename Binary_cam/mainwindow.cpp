@@ -12,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle("Computer Visual Project");
     m_Vision = Vision::getInstance();
-    while (!(m_Vision->m_VideoCapture.isOpened()))
-        m_Vision->m_VideoCapture.open(m_Vision->m_IdCamera);
     on_pushButton_Settings_clicked();
     setDisplayRatio();
     setupCam();
@@ -23,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioButton_16_9,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
     connect(ui->radioButton_4_3,SIGNAL(toggled(bool)),this,SLOT(setDisplayRatio()));
 
-    //setup sliders
+    //setup Camera Config sliders and checkBox
+    connect(ui->checkBox_CameraConfig,SIGNAL(toggled(bool)),this,SLOT(setupCam()));
     connect(ui->horizontalSlider_Bright,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
     connect(ui->horizontalSlider_Contr,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
     connect(ui->horizontalSlider_Satur,SIGNAL(valueChanged(int)),this,SLOT(setupCam()));
@@ -97,6 +96,12 @@ void MainWindow::drawFace(){
 }
 
 void MainWindow::setupCam(){
+    if(!ui->checkBox_CameraConfig->isChecked()){
+        m_Vision->m_VideoCapture.set(CV_CAP_PROP_BRIGHTNESS,m_Vision->m_CameraDefaultSettings[0]);
+        m_Vision->m_VideoCapture.set(CV_CAP_PROP_CONTRAST,m_Vision->m_CameraDefaultSettings[1]);
+        m_Vision->m_VideoCapture.set(CV_CAP_PROP_SATURATION,m_Vision->m_CameraDefaultSettings[2]);
+        return;
+    }
     m_Vision->m_VideoCapture.set(CV_CAP_PROP_BRIGHTNESS,float(ui->horizontalSlider_Bright->value())/100);
     m_Vision->m_VideoCapture.set(CV_CAP_PROP_CONTRAST,float(ui->horizontalSlider_Contr->value())/100);
     m_Vision->m_VideoCapture.set(CV_CAP_PROP_SATURATION,float(ui->horizontalSlider_Satur->value())/100);

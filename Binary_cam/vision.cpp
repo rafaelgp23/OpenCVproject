@@ -7,9 +7,16 @@ Vision* Vision::m_Instance = new Vision();
 
 Vision::Vision()
 {
+    m_IdCamera = 0;
+    while (!(m_VideoCapture.isOpened()))
+        m_VideoCapture.open(m_IdCamera);
+
+    m_CameraDefaultSettings[0] = m_VideoCapture.get(CV_CAP_PROP_BRIGHTNESS);
+    m_CameraDefaultSettings[1] = m_VideoCapture.get(CV_CAP_PROP_CONTRAST);
+    m_CameraDefaultSettings[2] = m_VideoCapture.get(CV_CAP_PROP_SATURATION);
+
     m_EyeCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_eye.xml");
     m_FacesCascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml");
-    m_IdCamera = 0;
     m_SteadyControl = -1;
 }
 
