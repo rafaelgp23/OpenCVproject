@@ -47,30 +47,21 @@ void Vision::faceDetect(){
     cv::cvtColor(m_RawFrame, m_GrayFrame, cv::COLOR_BGR2GRAY);
     cv::equalizeHist( m_GrayFrame, m_GrayFrame );
 
-    //Detect eyes
+    //DETECT EYES
     m_EyeCascade.detectMultiScale( m_GrayFrame, m_Eyes, 1.1, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(25, 25));
 
-    //    //draw eyes
-    //    for(int i=0;i<m_Eyes.size();++i){
-    //        cv::Point eyeCenter( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
-    //        cv::ellipse( m_FacesFrame, eyeCenter, Size( m_Eyes[i].width*0.5, m_Eyes[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 4, 8, 0 );
-    //    }
+    combineEyes();//define pair of eyes and left and right eye of each pair
 
-    combineEyes();
+    //DETECT FACES
 
-    //    //draw eyes combined
-    //    for(int i=0;i<m_Eyes.size();i+=2){
-    //        cv::Point leftEye( m_Eyes[i].x + m_Eyes[i].width*0.5, m_Eyes[i].y + m_Eyes[i].height*0.5 );
-    //        cv::Point rightEye( m_Eyes[i+1].x + m_Eyes[i+1].width*0.5, m_Eyes[i+1].y + m_Eyes[i+1].height*0.5 );
-    //        cv::line(m_FacesFrame,leftEye,rightEye, Scalar( 0, 0, 0 ),2);
-    //    }
-
-    //Detect faces
-
+    //defines a angle for each pair of eye
     for(int i=m_Angles.size();i<m_Eyes.size()/2;++i)
         m_Angles.push_back(0);
 
-    for(int i=0;i<m_Eyes.size();i+=2){
+
+    for(int i=0;i<m_Eyes.size();i+=2){ //For each pair of eyes
+
+        //Ignores false detections
         double newAng = atan((double)(m_Eyes[i].y - m_Eyes[i+1].y) / (double)(m_Eyes[i].x - m_Eyes[i+1].x));
         if(m_SteadyControl<5 || abs(newAng*180/M_PI-m_Angles[i/2]*180/M_PI)<30){ //ignores false detection and, in this case, keeps the value of angle
             m_Angles[i/2] = newAng;
@@ -85,6 +76,7 @@ void Vision::faceDetect(){
                 m_Angles.push_back(0);
         }
 
+        //Rotate the image to a image where the face is vertically oriented
         cv::Mat grayframe = m_GrayFrame.clone();
 
         int bound_w = int((m_GrayFrame.size().height * fabs(sin(m_Angles[i/2]))) + (m_GrayFrame.size().width * fabs(cos(m_Angles[i/2]))));
@@ -96,14 +88,11 @@ void Vision::faceDetect(){
 
         warpAffine(m_GrayFrame, grayframe, rotate, Size2i(bound_w, bound_h));
 
+        //Detect the faces on the rotated image
         faces.clear();
         m_FacesCascade.detectMultiScale( grayframe, faces, 1.3, 5, 0|cv::CASCADE_SCALE_IMAGE , Size(30, 30));
 
-        //    //draw faces (grayframe only)
-        //            for(int i=0;i<faces.size();++i){
-        //        cv::rectangle(m_GrayFrame, faces[i], Scalar( 255, 0, 0 ), 4, 8, 0);
-        //    }
-
+        //remap the face detections to the original non-rotated frame
         for(int j = 0;j<faces.size();++j){
             quadrangle quad;
             quad.p[0] = cv::Point(faces[j].x,faces[j].y);
@@ -118,9 +107,9 @@ void Vision::faceDetect(){
                 quad.p[k].x = m_FacesFrame.cols/2 + dist*cos(m_Angles[i/2]-ang);
                 quad.p[k].y = m_FacesFrame.rows/2 + dist*sin(m_Angles[i/2]-ang);
             }
-            cv::Point c1 = cv::Point((quad.p[0].x + quad.p[1].x + quad.p[2].x + quad.p[3].x)/4,(quad.p[0].y + quad.p[1].y + quad.p[2].y + quad.p[3].y)/4);
-            cv::Point c2;
-            bool flag = true;
+
+            //Remove repeated detections
+            cv::Point c2, c1 = cv::Point((quad.p[0].x + quad.p[1].x + quad.p[2].x + quad.p[3].x)/4,(quad.p[0].y + quad.p[1].y + quad.p[2].y + quad.p[3].y)/4);
             for(int i=0;i<m_Faces.size();++i){
                 c2 = cv::Point((m_Faces[i].p[0].x + m_Faces[i].p[1].x + m_Faces[i].p[2].x + m_Faces[i].p[3].x)/4,(m_Faces[i].p[0].y + m_Faces[i].p[1].y + m_Faces[i].p[2].y + m_Faces[i].p[3].y)/4);
                 float dist = sqrt((c2.x-c1.x,2)+pow(c2.y-c1.y,2));
@@ -129,12 +118,12 @@ void Vision::faceDetect(){
                     return;
                 }
             }
-            m_Faces.push_back(quad);
+            m_Faces.push_back(quad); //if not repeated
         }
     }
 }
 
-void Vision::combineEyes(){
+void Vision::combineEyes(){ //define pair of eyes and left and right eye of each pair
     //combine pair of eyes
     int minDist[m_Eyes.size()];
     int aux, dist;

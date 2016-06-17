@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //this timer refreshes the display frames
     m_DisplayTimer = new QTimer(this);
     connect(m_DisplayTimer, SIGNAL(timeout()), this, SLOT(refreshDisplay()));
-    m_DisplayTimer->start(1);//milisecond
+    m_DisplayTimer->start(33);//milisecond
 }
 
 //display the video using QLabel
@@ -44,10 +44,9 @@ void MainWindow::refreshDisplay()
 
     m_Vision->faceDetect();
     drawFace();
-    log();
     ui->display2->setPixmap(QPixmap::fromImage(Mat2QImage(m_Display2->clone())));
 
-    // log();
+    log();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev){
